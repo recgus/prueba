@@ -1,0 +1,209 @@
+---
+title: "Trabajo_Practico_1"
+author: "Gustavo Recalde"
+date: "10/2/2023"
+output:
+  html_document: default
+  pdf_document: default
+  toc: yes
+  toc_depth: 2
+lang: es-ES
+---
+
+#Opciones de fragmento
+
+La salida de fragmentos se puede personalizar con opciones de knitr , argumentos establecidos en el {} encabezado de un fragmento. Arriba, usamos cinco argumentos:
+
+- `include = FALSE` evita que el código y los resultados aparezcan en el archivo terminado. R Markdown aún ejecuta el código en el fragmento y los resultados pueden ser utilizados por otros fragmentos.
+- `echo = FALSE` evita que el código, pero no los resultados, aparezca en el archivo terminado. Esta es una forma útil de incrustar figuras.
+- `message = FALSE` evita que los mensajes generados por el código aparezcan en el archivo terminado.
+- `warning = FALSE` evita que las advertencias generadas por el código aparezcan en el terminado.
+fig.cap = "..." agrega un título a los resultados gráficos.
+
+
+## ¿Para qué sirve R Markdown?
+
+Es un espacio de trabajo en el que podemos combinar código y texto para construir diferentes tipos de reportes:
+
+-   Diferentes formatos como: PDF, HTML o Word.
+
+-   Notebooks en los que pueda ejecutar directamente fragmentos de código de forma interactiva.
+
+-   Diapositivas para presentaciones (HTML5, LaTeX Beamer o PowerPoint).
+
+-   Tableros con diseños flexibles, interactivos y atractivos.
+
+-   Aplicaciones interactivas basadas en Shiny.
+
+-   Escribir artículos de revistas.
+
+-   Autor de libros de varios capítulos.
+
+-   Generar sitios web y blogs.
+
+
+## Primer bloque de código
+La primera línea hace que este código no aparezca en el documento final. La segunda línea es para permitir que el código R y la salida se impriman en el documento final.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Se observa código y mensajes de las advertencias de las librerias
+```{r }
+# cargamos las librerias
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(readxl)
+```
+
+De esta forma, no se visualiza el código ni los mensajes de las librerias
+```{r librarys, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# cargamos las librerias
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(readxl)
+library(plotly)
+```
+
+
+# Título de primer nivel
+## Título de segundo nivel
+### Título de tercer nivel
+
+
+*Texto en cursiva*
+
+**Texto en negrita**
+
+***Texto en negrita y cursiva***
+
+[Para colocar link de enlace](http://infobae.com)
+
+
+![Importamos una imagen](Capturas/captura.PNG)  
+
+Incluir formula seria de la siguiente forma:
+ecuación $e = mc^{2}$
+
+
+Puede comenzar una nueva diapositiva con una regla horizontal `***` si no desea
+un encabezado
+
+***
+
+> Bloque de un cita en el documento
+
+
+## Uno de viñetas
+
+Viñetas
+
+- un guión
+- otro guión
+
+## Viñetas incrementales
+
+>- Usa este formato
+>- Para que aparezcan viñetas
+>- ono a la vez
+
+
+
+```{r, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+# importamos y colocamos todos los objetos
+datos <- read_excel("C:/Users/Usuario/Downloads/Educacion primaria y secundaria segun territorio(1).xlsx")
+
+
+datos2 <- melt(data=datos,
+               idvar="Provincia", 
+               measure.vars=c(2:14), 
+               variable.name = "Año_de_Estudio",
+               value.name = "Cantidad")
+```
+
+Visualizar las variables del data set
+```{r}
+head(datos2)
+```
+
+
+Vamos a ejecutar un trozo de còdigo para obtener el gràfico
+```{r}
+ggplot(data= datos2) +
+  geom_point(mapping = aes(x=Cantidad, y = Provincia))
+```
+
+
+Como observaras en el código anterior, se visualiza el código y el gráfico, si solo quiero mostrar el gráfico se debe colocar echo=FALSE
+```{r echo=FALSE}
+ggplot(data= datos2) +
+  geom_point(mapping = aes(x=Cantidad, y = Provincia))
+```
+
+Si queremos ejecutar y solo mostrar el código sin el gráfico
+```{r eval=FALSE}
+ggplot(data= datos2) +
+  geom_point(mapping = aes(x=Cantidad, y = Provincia))
+```
+
+
+Mensaje de advertencia, con esta ejecucion veremos el mensaje
+```{r }
+data("HairEyeColor")
+HairEyeColor
+chisq.test(HairEyeColor[, , 2])
+```
+
+
+Sacar el mensaje de advertencia, 
+```{r warning=FALSE}
+data("HairEyeColor")
+HairEyeColor
+chisq.test(HairEyeColor[, , 2])
+```
+
+
+A veces puede ser que se ejecúte con algún error y que sea parte normal del código. Para que se ejecute con error esta linea, borrar del bloque *error=TRUE*
+```{r error=TRUE}
+ggplot(datos2, aes(Año_de_Estu,Cantidad))+
+  geom_point()
+```
+
+Si no queremos que salga el mensaje de error!!
+```{r error=TRUE, eval=FALSE}
+ggplot(datos2, aes(Año_de_Estu,Cantidad))+
+  geom_point()
+```
+
+
+# Gráfico interactivo
+## Generamos un grárafico comun
+```{r echo=FALSE}
+data <- economics 
+econ_g <- ggplot(data, aes(date,unemploy))+
+  geom_line(color="red") +
+  ggtitle("Tendencia de desempleo") +
+  xlab("Fecha") + ylab("Desempleo") +
+  theme_classic()
+
+econ_g
+  
+```
+
+## Grafico interactivo
+```{r}
+ggplotly(econ_g)
+```
+
+
+
+
+
+
+
+
